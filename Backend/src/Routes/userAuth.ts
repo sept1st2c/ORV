@@ -1,24 +1,33 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
+import { JWT_SECRET } from "../config";
 
+const prisma = new PrismaClient();
 const router = Router();
-
-// Mock user database
-const users: { username: string; password: string }[] = [];
 
 // Signup route
 router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
-  users.push({ username, password: hashedPassword });
-  res.status(201).json({ message: "User created" });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
+    res.status(201).json({ message: "User created" });
+  } catch (error) {
+    res.status(400).json({ error: "Username already exists" });
+  }
 });
 
 // Signin route
 router.post("/signin", async (req, res) => {
   const { username, password } = req.body;
-  const user = users.find((u) => u.username === username);
+  const user = await prisma.user.findUnique({ where: { username } });
   if (!user) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
@@ -26,10 +35,13 @@ router.post("/signin", async (req, res) => {
   if (!isMatch) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
-  const token = jwt.sign({ username: user.username }, "secret", {
-    expiresIn: "1h",
-  });
-  res.json({ token });
+  const token = await jwt.sign(
+    {
+      id: user.id,
+    },
+    JWT_SECRET
+  );
+  return res.json("" + token);
 });
 
 export default router;
