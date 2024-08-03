@@ -17,4 +17,21 @@ model User {
   id       Int    @id @default(autoincrement())
   username String @unique
   password String
+  
+}
+
+model Author {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  lives    Int     @default(0)
+  books    Book[]
+}
+
+model Book {
+  id       Int     @id @default(autoincrement())
+  title    String
+  content  String
+  author   Author  @relation(fields: [authorId], references: [id])
+  authorId Int
 }

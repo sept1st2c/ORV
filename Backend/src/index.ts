@@ -5,10 +5,10 @@ const app = express();
 app.use(bodyParser.json());
 
 // Import routes
-import authRoutes from "./Routes/userAuth";
+import userRouter from "./Routes/userAuth";
 
 // Use routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", userRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

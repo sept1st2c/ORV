@@ -5,10 +5,10 @@ import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../config";
 
 const prisma = new PrismaClient();
-const router = Router();
+const userRouter = Router();
 
 // Signup route
-router.post("/signup", async (req, res) => {
+userRouter.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
@@ -25,7 +25,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // Signin route
-router.post("/signin", async (req, res) => {
+userRouter.post("/signin", async (req, res) => {
   const { username, password } = req.body;
   const user = await prisma.user.findUnique({ where: { username } });
   if (!user) {
@@ -44,4 +44,4 @@ router.post("/signin", async (req, res) => {
   return res.json("" + token);
 });
 
-export default router;
+export default userRouter;
