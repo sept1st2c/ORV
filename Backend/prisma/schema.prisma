@@ -14,24 +14,41 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
+  id       Int      @id @default(autoincrement())
+  username String   @unique
   password String
-  
+  books    Book[]   // One-to-many relationship with books
+  comments Comment[] // One-to-many relationship with comments
 }
 
 model Author {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
+  id       Int      @id @default(autoincrement())
+  username String   @unique
   password String
-  lives    Int     @default(0)
-  books    Book[]
+  lives    Int      @default(0)
+  books    Book[]   // One-to-many relationship with books
+  comments Comment[] // One-to-many relationship with comments
 }
 
+
 model Book {
-  id       Int     @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   title    String
   content  String
-  author   Author  @relation(fields: [authorId], references: [id])
-  authorId Int
+  author   Author?  @relation(fields: [authorId], references: [id])
+  authorId Int?
+  user     User?    @relation(fields: [userId], references: [id])
+  userId   Int?
+  comments Comment[] // One-to-many relationship with comments
+}
+
+model Comment {
+  id      Int   @id @default(autoincrement())
+  content String
+  author  Author? @relation(fields: [authorId], references: [id])
+  authorId Int?
+  user    User? @relation(fields: [userId], references: [id])
+  userId  Int?
+  book    Book @relation(fields: [bookId], references: [id])
+  bookId  Int
 }
