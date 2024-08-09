@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+//import reactLogo from "./assets/react.svg";
+//import viteLogo from "/vite.svg";
 import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0);
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const socket = new WebSocket("ws://localhost:8080");
+const App: React.FC = () => {
+  const [input, setInput] = useState<string>('');
+  const [messages, setMessages] = useState<string[]>([]);
+
+  const socket = new WebSocket('ws://localhost:8080');
 
   useEffect(() => {
     // Handle incoming messages
-    socket.onmessage = (event) => {
-      setMessages((prevMessages) => [...prevMessages, event.data]);
+    socket.onmessage = (event: MessageEvent) => {
+      setMessages(prevMessages => [...prevMessages, event.data]);
     };
 
     // Cleanup on unmount
@@ -22,7 +22,7 @@ function App() {
     };
   }, [socket]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setInput(newValue);
 
