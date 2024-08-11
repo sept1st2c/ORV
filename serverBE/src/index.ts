@@ -1,15 +1,29 @@
-import express from "express";
-import bodyParser from "body-parser";
-
+const express = require("express");
+const http = require("http");
+const socketIO = require("socket.io");
 const app = express();
-app.use(bodyParser.json());
+const server = http.createServer(app);
+const io = socketIO(server);
 
-// Import routes
-import userRouter from "./Routes/userAuth";
+io.on("connection", (socket) => {
+  console.log("A user connected");
 
-// Use routes
-app.use("/api/auth", userRouter);
+  socket.on("joinRoom", ({ storyId }) => {
+    socket.join(storyId);
+  });
 
+  socket.on("storyUpdate", ({ storyId, content }) => {
+    // Broadcast the updated content to all readers
+    io.to(storyId).emit("storyUpdate", { content });
+
+    // Save the content to the database (pseudo code)
+    saveStoryContentToDB(storyId, content);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
