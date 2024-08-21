@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
     io.to(storyId).emit("storyUpdate", { content });
 
     // Save the content to the database (pseudo code)
-    saveStoryContentToDB(storyId, content);
+   // saveStoryContentToDB(storyId, content);
   });
 
   socket.on("disconnect", () => {

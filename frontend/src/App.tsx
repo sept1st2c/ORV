@@ -4,7 +4,11 @@ import React from "react";
 //const socket = io("http://localhost:5000");
 
 const App: React.FC = () => {
-  return <div></div>;
+  return <div>
+    <Main>
+      
+    </Main>
+  </div>;
 };
 
 export default App;
